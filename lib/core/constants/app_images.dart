@@ -2,7 +2,7 @@ class AppImages {
   AppImages._();
 
   static const String _imagesPath = 'assets/images';
-  static const String _iconsPath = 'assets/icons';
+  // static const String _iconsPath = 'assets/icons';
 
   static const String logo = '$_imagesPath/logo.png';
   static const String otpEmail = '$_imagesPath/otp_email.png';

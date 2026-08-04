@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -5,6 +6,7 @@ import '../../../core/utils/responsive.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/section_title.dart';
 import '../../../shared/widgets/summary_card.dart';
+import '../../../shared/widgets/shimmer_loading.dart';
 import 'widgets/dashboard_chart.dart';
 import 'widgets/quick_actions.dart';
 import 'widgets/recent_activities_table.dart';
@@ -12,11 +14,38 @@ import 'widgets/upcoming_events_list.dart';
 
 /// The main Dashboard: summary cards, headcount chart, recent activities,
 /// upcoming events, and quick actions. Fully responsive.
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  bool _isLoading = true;
+  Timer? _loadingTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadingTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _loadingTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return _isLoading ? _buildSkeleton(context) : _buildContent(context);
+  }
+
+  Widget _buildContent(BuildContext context) {
     final isDesktop = Responsive.isDesktop(context);
     final columns = Responsive.gridColumns(context);
 
@@ -160,6 +189,76 @@ class DashboardPage extends StatelessWidget {
           SizedBox(height: AppSizes.spaceMd),
           QuickActions(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSkeleton(BuildContext context) {
+    final isDesktop = Responsive.isDesktop(context);
+    final columns = Responsive.gridColumns(context);
+
+    return ShimmerLoading(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSizes.spaceLg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ShimmerBox(width: 240, height: 22),
+            const SizedBox(height: AppSizes.spaceXs),
+            const ShimmerBox(width: 280, height: 14),
+            const SizedBox(height: AppSizes.spaceLg),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: columns,
+              mainAxisSpacing: AppSizes.spaceMd,
+              crossAxisSpacing: AppSizes.spaceMd,
+              childAspectRatio: 1.6,
+              children: List.generate(
+                4,
+                (_) => const ShimmerBox(height: double.infinity, borderRadius: AppSizes.radiusMd),
+              ),
+            ),
+            const SizedBox(height: AppSizes.spaceLg),
+            isDesktop
+                ? const IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(flex: 3, child: ShimmerBox(height: 320, borderRadius: AppSizes.radiusMd)),
+                        SizedBox(width: AppSizes.spaceLg),
+                        Expanded(flex: 2, child: ShimmerBox(height: 320, borderRadius: AppSizes.radiusMd)),
+                      ],
+                    ),
+                  )
+                : const Column(
+                    children: [
+                      ShimmerBox(height: 320, borderRadius: AppSizes.radiusMd),
+                      SizedBox(height: AppSizes.spaceLg),
+                      ShimmerBox(height: 320, borderRadius: AppSizes.radiusMd),
+                    ],
+                  ),
+            const SizedBox(height: AppSizes.spaceLg),
+            isDesktop
+                ? const IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(flex: 3, child: ShimmerBox(height: 260, borderRadius: AppSizes.radiusMd)),
+                        SizedBox(width: AppSizes.spaceLg),
+                        Expanded(flex: 2, child: ShimmerBox(height: 260, borderRadius: AppSizes.radiusMd)),
+                      ],
+                    ),
+                  )
+                : const Column(
+                    children: [
+                      ShimmerBox(height: 260, borderRadius: AppSizes.radiusMd),
+                      SizedBox(height: AppSizes.spaceLg),
+                      ShimmerBox(height: 260, borderRadius: AppSizes.radiusMd),
+                    ],
+                  ),
+          ],
+        ),
       ),
     );
   }

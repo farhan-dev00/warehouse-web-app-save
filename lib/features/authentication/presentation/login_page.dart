@@ -21,7 +21,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController(text: 'admin@novahr.com');
   final _passwordController = TextEditingController(text: 'password');
-  bool _rememberMe = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
 
