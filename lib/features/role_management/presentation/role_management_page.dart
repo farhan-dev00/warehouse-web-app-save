@@ -5,16 +5,16 @@ import '../../../core/utils/responsive.dart';
 import '../../../shared/dialogs/action_dialog.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/section_title.dart';
-import '../models/department_dummy_data.dart';
+import '../models/role_management_dummy_data.dart';
 
-/// Departments page: a responsive grid of department cards, each showing
+/// Role Manangement page: a responsive grid of Role Manangement cards, each showing
 /// manager, headcount, and quick actions.
-class DepartmentsPage extends StatelessWidget {
-  const DepartmentsPage({super.key});
+class RoleManagementPage extends StatelessWidget {
+  const RoleManagementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final departments = DepartmentDummyData.generate();
+    final roleManagements = RoleManagementDummyData.generate();
     final columns = Responsive.gridColumns(context).clamp(1, 3);
 
     return SingleChildScrollView(
@@ -23,19 +23,19 @@ class DepartmentsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle(
-            title: 'Departments',
-            subtitle: '${departments.length} departments',
+            title: 'Role Management',
+            subtitle: '${roleManagements.length} roleManagements',
             trailing: ElevatedButton.icon(
-              onPressed: () => showActionDialog(context, action: 'Add Department'),
+              onPressed: () => showActionDialog(context, action: 'Add RoleManagement'),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Department'),
+              label: const Text('Add RoleManagement'),
             ),
           ),
           const SizedBox(height: AppSizes.spaceLg),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: departments.length,
+            itemCount: roleManagements.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               mainAxisSpacing: AppSizes.spaceMd,
@@ -43,7 +43,7 @@ class DepartmentsPage extends StatelessWidget {
               childAspectRatio: 1.7,
             ),
             itemBuilder: (context, i) {
-              final d = departments[i];
+              final d = roleManagements[i];
               return AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -7,8 +7,8 @@ import '../../shared/widgets/app_scaffold.dart';
 import '../../features/authentication/presentation/login_page.dart';
 import '../../features/authentication/presentation/otp_verification_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
-import '../../features/employees/presentation/employees_page.dart';
-import '../../features/departments/presentation/departments_page.dart';
+import '../../features/employees/presentation/user_management_page.dart';
+import '../../features/role_management/presentation/role_management_page.dart';
 import '../../features/attendance/presentation/attendance_page.dart';
 import '../../features/leave/presentation/leave_page.dart';
 import '../../features/payroll/presentation/payroll_page.dart';
@@ -18,8 +18,8 @@ import '../../features/settings/presentation/settings_page.dart';
 /// Maps a route path to the title shown in the top bar.
 const Map<String, String> routeTitles = {
   '/dashboard': 'Dashboard',
-  '/employees': 'Employees',
-  '/departments': 'Departments',
+  '/user_management': 'User Management',
+  '/role_management': 'Role Management',
   '/attendance': 'Attendance',
   '/leave': 'Leave Management',
   '/payroll': 'Payroll',
@@ -64,8 +64,8 @@ GoRouter _buildRouter(Ref ref) {
         },
         routes: [
           GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
-          GoRoute(path: '/employees', builder: (context, state) => const EmployeesPage()),
-          GoRoute(path: '/departments', builder: (context, state) => const DepartmentsPage()),
+          GoRoute(path: '/user_management', builder: (context, state) => const UserManagementPage()),
+          GoRoute(path: '/role_management', builder: (context, state) => const RoleManagementPage()),
           GoRoute(path: '/attendance', builder: (context, state) => const AttendancePage()),
           GoRoute(path: '/leave', builder: (context, state) => const LeavePage()),
           GoRoute(path: '/payroll', builder: (context, state) => const PayrollPage()),

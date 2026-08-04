@@ -7,7 +7,7 @@ import '../models/nav_item.dart';
 
 /// Sidebar navigation menu.
 ///
-/// Supports flat items (Dashboard) and expandable groups (Human Resource ->
+/// Supports flat items (Dashboard) and expandable groups (Access Control ->
 /// Employees / Departments / ...). Highlights whichever route matches
 /// [currentRoute]. Used both as a fixed sidebar (desktop) and inside a
 /// Drawer (mobile) — see AppScaffold.
@@ -20,11 +20,11 @@ class AppSidebar extends StatelessWidget {
   static final List<NavItem> navItems = [
     const NavItem(label: 'Dashboard', icon: Icons.dashboard_outlined, route: '/dashboard'),
     const NavItem(
-      label: 'Human Resource',
+      label: 'Access Control',
       icon: Icons.groups_outlined,
       children: [
-        NavItem(label: 'Employees', icon: Icons.badge_outlined, route: '/employees'),
-        NavItem(label: 'Departments', icon: Icons.apartment_outlined, route: '/departments'),
+        NavItem(label: 'User Management', icon: Icons.badge_outlined, route: '/user_management'),
+        NavItem(label: 'Role Management', icon: Icons.apartment_outlined, route: '/role_management'),
         NavItem(label: 'Attendance', icon: Icons.fact_check_outlined, route: '/attendance'),
         NavItem(label: 'Leave', icon: Icons.event_busy_outlined, route: '/leave'),
       ],

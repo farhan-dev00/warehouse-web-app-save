@@ -10,14 +10,14 @@ import '../models/employee_model.dart';
 import 'widgets/employee_table.dart';
 
 /// Employees listing page: search, department filter, paginated table.
-class EmployeesPage extends StatefulWidget {
-  const EmployeesPage({super.key});
+class UserManagementPage extends StatefulWidget {
+  const UserManagementPage({super.key});
 
   @override
-  State<EmployeesPage> createState() => _EmployeesPageState();
+  State<UserManagementPage> createState() => _UserManagementPageState();
 }
 
-class _EmployeesPageState extends State<EmployeesPage> {
+class _UserManagementPageState extends State<UserManagementPage> {
   final List<Employee> _allEmployees = EmployeeDummyData.generate(count: 30);
   String _query = '';
   String _departmentFilter = 'All';
