@@ -10,8 +10,8 @@ import '../models/attendance_dummy_data.dart';
 
 /// Attendance page: summary cards + a calendar-style day strip + a table
 /// of today's check-in / check-out records.
-class AttendancePage extends StatelessWidget {
-  const AttendancePage({super.key});
+class PermissionManagementPage extends StatelessWidget {
+  const PermissionManagementPage({super.key});
 
   StatusChip _statusChip(String status) {
     switch (status) {

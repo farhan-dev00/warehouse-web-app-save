@@ -25,8 +25,7 @@ class AppSidebar extends StatelessWidget {
       children: [
         NavItem(label: 'User Management', icon: Icons.badge_outlined, route: '/user_management'),
         NavItem(label: 'Role Management', icon: Icons.apartment_outlined, route: '/role_management'),
-        NavItem(label: 'Attendance', icon: Icons.fact_check_outlined, route: '/attendance'),
-        NavItem(label: 'Leave', icon: Icons.event_busy_outlined, route: '/leave'),
+        NavItem(label: 'Permission Management', icon: Icons.fact_check_outlined, route: '/permission_management'),
       ],
     ),
     const NavItem(

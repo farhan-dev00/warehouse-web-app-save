@@ -3,7 +3,7 @@
 class AppSizes {
   AppSizes._();
 
-  static const double sidebarWidth = 250;
+  static const double sidebarWidth = 262;
   static const double sidebarCollapsedWidth = 76;
   static const double topBarHeight = 68;
 

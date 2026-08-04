@@ -9,8 +9,7 @@ import '../../features/authentication/presentation/otp_verification_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/employees/presentation/user_management_page.dart';
 import '../../features/role_management/presentation/role_management_page.dart';
-import '../../features/attendance/presentation/attendance_page.dart';
-import '../../features/leave/presentation/leave_page.dart';
+import '../../features/permission_management/presentation/permission_management_page.dart';
 import '../../features/payroll/presentation/payroll_page.dart';
 import '../../features/reports/presentation/reports_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
@@ -20,8 +19,7 @@ const Map<String, String> routeTitles = {
   '/dashboard': 'Dashboard',
   '/user_management': 'User Management',
   '/role_management': 'Role Management',
-  '/attendance': 'Attendance',
-  '/leave': 'Leave Management',
+  '/permission_management': 'Permission Management',
   '/payroll': 'Payroll',
   '/reports': 'Reports',
   '/settings': 'Settings',
@@ -66,8 +64,7 @@ GoRouter _buildRouter(Ref ref) {
           GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
           GoRoute(path: '/user_management', builder: (context, state) => const UserManagementPage()),
           GoRoute(path: '/role_management', builder: (context, state) => const RoleManagementPage()),
-          GoRoute(path: '/attendance', builder: (context, state) => const AttendancePage()),
-          GoRoute(path: '/leave', builder: (context, state) => const LeavePage()),
+          GoRoute(path: '/permission_management', builder: (context, state) => const PermissionManagementPage()),
           GoRoute(path: '/payroll', builder: (context, state) => const PayrollPage()),
           GoRoute(path: '/reports', builder: (context, state) => const ReportsPage()),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
