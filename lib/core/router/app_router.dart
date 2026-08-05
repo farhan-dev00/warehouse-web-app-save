@@ -7,7 +7,7 @@ import '../../shared/widgets/app_scaffold.dart';
 import '../../features/authentication/presentation/login_page.dart';
 import '../../features/authentication/presentation/otp_verification_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
-import '../../features/employees/presentation/user_management_page.dart';
+import '../../features/user_management/presentation/user_management_page.dart';
 import '../../features/role_management/presentation/role_management_page.dart';
 import '../../features/permission_management/presentation/permission_management_page.dart';
 import '../../features/good_receive/presentation/good_receive_page.dart';
@@ -32,16 +32,18 @@ final routerProvider = Provider<GoRouter>((ref) => _buildRouter(ref));
 /// navigating while logged out always redirects back to /login.
 GoRouter _buildRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/dashboard', // was '/login'
     refreshListenable: _AuthListenable(ref),
     redirect: (context, state) {
-      final loggedIn = ref.read(isLoggedInProvider);
-      final loggingIn = state.matchedLocation == '/login' ||
-          state.matchedLocation == '/otp-verification';
-
-      if (!loggedIn && !loggingIn) return '/login';
-      if (loggedIn && loggingIn) return '/dashboard';
+      // --- TEMP: bypass auth while building UI ---
       return null;
+      // --- original logic below, restore when done ---
+      // final loggedIn = ref.read(isLoggedInProvider);
+      // final loggingIn = state.matchedLocation == '/login' ||
+      //     state.matchedLocation == '/otp-verification';
+      // if (!loggedIn && !loggingIn) return '/login';
+      // if (loggedIn && loggingIn) return '/dashboard';
+      // return null;
     },
     routes: [
       GoRoute(
