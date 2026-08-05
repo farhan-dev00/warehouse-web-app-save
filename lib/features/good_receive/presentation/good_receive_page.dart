@@ -10,8 +10,8 @@ import '../../../shared/widgets/summary_card.dart';
 import '../models/payroll_dummy_data.dart';
 
 /// Payroll page: totals summary + payroll table + "Generate Payroll" action.
-class PayrollPage extends StatelessWidget {
-  const PayrollPage({super.key});
+class GoodReceivePage extends StatelessWidget {
+  const GoodReceivePage({super.key});
 
   StatusChip _statusChip(String status) {
     switch (status) {
@@ -38,10 +38,10 @@ class PayrollPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle(
-            title: 'Payroll',
+            title: 'Good Receive',
             subtitle: 'Current pay period · August 2026',
             trailing: ElevatedButton.icon(
-              onPressed: () => showActionDialog(context, action: 'Generate Payroll'),
+              onPressed: () => showActionDialog(context, action: 'Generate Good Receive'),
               icon: const Icon(Icons.autorenew, size: 18),
               label: const Text('Generate Payroll'),
             ),

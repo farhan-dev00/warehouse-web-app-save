@@ -29,11 +29,13 @@ class AppSidebar extends StatelessWidget {
       ],
     ),
     const NavItem(
-      label: 'Finance',
+      label: 'Transactions',
       icon: Icons.account_balance_wallet_outlined,
       children: [
-        NavItem(label: 'Payroll', icon: Icons.payments_outlined, route: '/payroll'),
-        NavItem(label: 'Reports', icon: Icons.bar_chart_outlined, route: '/reports'),
+        NavItem(label: 'Good Receive', icon: Icons.payments_outlined, route: '/good_receive'),
+        NavItem(label: 'Transfer & Putaway', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
+        NavItem(label: 'Pick & Pack', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
+        NavItem(label: 'Outgoing', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
       ],
     ),
     const NavItem(label: 'Settings', icon: Icons.settings_outlined, route: '/settings'),

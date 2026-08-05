@@ -10,8 +10,8 @@ import '../../../shared/widgets/summary_card.dart';
 
 /// Reports page: headline stats + a bar chart (headcount by dept) and a
 /// pie chart (payroll distribution), plus a "Download Report" action.
-class ReportsPage extends StatelessWidget {
-  const ReportsPage({super.key});
+class TransferPutawayPage extends StatelessWidget {
+  const TransferPutawayPage({super.key});
 
   @override
   Widget build(BuildContext context) {
