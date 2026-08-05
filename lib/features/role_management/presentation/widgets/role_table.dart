@@ -3,24 +3,28 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/dialogs/action_dialog.dart';
 import '../../../../shared/dialogs/confirm_dialog.dart';
 import '../../../../shared/widgets/status_chip.dart';
-import '../../models/employee_model.dart';
+import '../../models/role_model.dart';
 
-/// Data table rendering a page of employees with photo, status chip and
+/// Data table rendering a page of roles with status chip and
 /// row actions (view / edit / delete). Delete asks for confirmation first.
-class EmployeeTable extends StatelessWidget {
-  final List<Employee> employees;
+class RoleTable extends StatelessWidget {
+  final List<Role> roles;
 
-  const EmployeeTable({super.key, required this.employees});
+  const RoleTable({super.key, required this.roles});
 
   StatusChip _statusChip(String status) {
     switch (status) {
       case 'Active':
         return StatusChip.success(status);
-      case 'On Leave':
-        return StatusChip.warning(status);
-      default:
+      case 'Inactive':
         return StatusChip.danger(status);
+      default:
+        return StatusChip.warning(status);
     }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -31,48 +35,38 @@ class EmployeeTable extends StatelessWidget {
         columnSpacing: 28,
         headingRowColor: WidgetStateProperty.all(AppColors.background),
         columns: const [
-          DataColumn(label: Text('Employee')),
-          DataColumn(label: Text('ID')),
-          DataColumn(label: Text('Department')),
-          DataColumn(label: Text('Position')),
-          DataColumn(label: Text('Email')),
+          DataColumn(label: Text('Code')),
+          DataColumn(label: Text('Name')),
+          DataColumn(label: Text('Description')),
           DataColumn(label: Text('Status')),
+          DataColumn(label: Text('Created')),
           DataColumn(label: Text('Actions')),
         ],
-        rows: employees.map((e) {
+        rows: roles.map((r) {
           return DataRow(cells: [
-            DataCell(Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: AppColors.primaryLight,
-                  child: Text(
-                    e.avatarInitials,
-                    style: const TextStyle(
-                        fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w700),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(e.name),
-              ],
+            DataCell(Text(r.roleCode)),
+            DataCell(Text(r.roleName)),
+            DataCell(SizedBox(
+              width: 220,
+              child: Text(
+                r.roleDesc,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             )),
-            DataCell(Text(e.id)),
-            DataCell(Text(e.department)),
-            DataCell(Text(e.position)),
-            DataCell(Text(e.email)),
-            DataCell(_statusChip(e.status)),
+            DataCell(_statusChip(r.roleStatus)),
+            DataCell(Text(_formatDate(r.roleCD))),
             DataCell(Row(
               children: [
                 IconButton(
                   tooltip: 'View',
                   icon: const Icon(Icons.visibility_outlined, size: 18),
-                  onPressed: () => showActionDialog(context, action: 'View ${e.name}'),
+                  onPressed: () => showActionDialog(context, action: 'View ${r.roleName}'),
                 ),
                 IconButton(
                   tooltip: 'Edit',
                   icon: const Icon(Icons.edit_outlined, size: 18),
-                  onPressed: () => showActionDialog(context, action: 'Edit ${e.name}'),
+                  onPressed: () => showActionDialog(context, action: 'Edit ${r.roleName}'),
                 ),
                 IconButton(
                   tooltip: 'Delete',
@@ -80,14 +74,14 @@ class EmployeeTable extends StatelessWidget {
                   onPressed: () async {
                     final confirmed = await showConfirmDialog(
                       context,
-                      title: 'Delete Employee',
-                      message: 'Are you sure you want to delete ${e.name}?',
+                      title: 'Delete Role',
+                      message: 'Are you sure you want to delete ${r.roleName}?',
                       confirmLabel: 'Delete',
                       isDestructive: true,
                     );
                     if (confirmed == true && context.mounted) {
-                      showActionDialog(context, action: 'Delete ${e.name}',
-                          details: '${e.name} has been removed (demo only, not persisted).');
+                      showActionDialog(context, action: 'Delete ${r.roleName}',
+                          details: '${r.roleName} has been removed (demo only, not persisted).');
                     }
                   },
                 ),

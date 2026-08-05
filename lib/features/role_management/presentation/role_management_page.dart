@@ -1,21 +1,51 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import 'package:warehouse_web_app/features/role_management/models/role_dummy_data.dart';
+import 'package:warehouse_web_app/features/role_management/models/role_model.dart';
+import 'package:warehouse_web_app/features/role_management/presentation/widgets/role_table.dart';
+import 'package:warehouse_web_app/shared/widgets/pagination_bar.dart';
+import 'package:warehouse_web_app/shared/widgets/search_field.dart';
 import '../../../core/constants/app_sizes.dart';
-import '../../../core/utils/responsive.dart';
 import '../../../shared/dialogs/action_dialog.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/section_title.dart';
-import '../models/role_management_dummy_data.dart';
 
-/// Role Manangement page: a responsive grid of Role Manangement cards, each showing
-/// manager, headcount, and quick actions.
-class RoleManagementPage extends StatelessWidget {
+/// Role Management page: search, status filter, paginated table of roles.
+class RoleManagementPage extends StatefulWidget {
   const RoleManagementPage({super.key});
 
   @override
+  State<RoleManagementPage> createState() => _RoleManagementPageState();
+}
+
+class _RoleManagementPageState extends State<RoleManagementPage> {
+  final List<Role> _allRoles = RoleDummyData.generate(count: 30);
+  String _query = '';
+  String _statusFilter = 'All';
+  int _page = 1;
+  static const _pageSize = 8;
+
+  List<Role> get _filtered {
+    return _allRoles.where((r) {
+      final matchesQuery = _query.isEmpty ||
+          r.roleName.toLowerCase().contains(_query.toLowerCase()) ||
+          r.roleCode.toLowerCase().contains(_query.toLowerCase());
+      final matchesStatus = _statusFilter == 'All' || r.roleStatus == _statusFilter;
+      return matchesQuery && matchesStatus;
+    }).toList();
+  }
+
+  List<Role> get _pageItems {
+    final filtered = _filtered;
+    final start = (_page - 1) * _pageSize;
+    if (start >= filtered.length) return [];
+    return filtered.skip(start).take(_pageSize).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final roleManagements = RoleManagementDummyData.generate();
-    final columns = Responsive.gridColumns(context).clamp(1, 3);
+    final statuses = ['All', ...{for (final r in _allRoles) r.roleStatus}];
+    final filteredCount = _filtered.length;
+    final totalPages = (filteredCount / _pageSize).ceil();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSizes.spaceLg),
@@ -24,74 +54,66 @@ class RoleManagementPage extends StatelessWidget {
         children: [
           SectionTitle(
             title: 'Role Management',
-            subtitle: '${roleManagements.length} roleManagements',
+            subtitle: '$filteredCount roles found',
             trailing: ElevatedButton.icon(
-              onPressed: () => showActionDialog(context, action: 'Add RoleManagement'),
+              onPressed: () => showActionDialog(context, action: 'Add Role'),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add RoleManagement'),
+              label: const Text('Add Role'),
             ),
           ),
           const SizedBox(height: AppSizes.spaceLg),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: roleManagements.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columns,
-              mainAxisSpacing: AppSizes.spaceMd,
-              crossAxisSpacing: AppSizes.spaceMd,
-              childAspectRatio: 1.7,
-            ),
-            itemBuilder: (context, i) {
-              final d = roleManagements[i];
-              return AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: AppSizes.spaceMd,
+                  runSpacing: AppSizes.spaceSm,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-                          ),
-                          child: const Icon(Icons.apartment_outlined, color: AppColors.primary),
-                        ),
-                        PopupMenuButton<String>(
-                          onSelected: (v) => showActionDialog(context, action: '$v ${d.name}'),
-                          itemBuilder: (ctx) => const [
-                            PopupMenuItem(value: 'Edit', child: Text('Edit')),
-                            PopupMenuItem(value: 'Delete', child: Text('Delete')),
-                          ],
-                        ),
-                      ],
+                    SearchField(
+                      hint: 'Search by name or code...',
+                      onChanged: (v) => setState(() {
+                        _query = v;
+                        _page = 1;
+                      }),
                     ),
-                    const SizedBox(height: AppSizes.spaceSm),
-                    Text(d.name,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 4),
-                    Text(d.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                    const Spacer(),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Manager: ${d.manager}',
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                        Text('${d.totalEmployees} staff',
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
-                      ],
+                    SizedBox(
+                      width: 220,
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _statusFilter,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.filter_list, size: 20),
+                          isDense: true,
+                        ),
+                        items: statuses
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                            .toList(),
+                        onChanged: (v) => setState(() {
+                          _statusFilter = v ?? 'All';
+                          _page = 1;
+                        }),
+                      ),
                     ),
                   ],
                 ),
-              );
-            },
+                const SizedBox(height: AppSizes.spaceLg),
+                _pageItems.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: Center(child: Text('No roles match your search.')),
+                      )
+                    : RoleTable(roles: _pageItems),
+                const SizedBox(height: AppSizes.spaceMd),
+                PaginationBar(
+                  currentPage: _page,
+                  totalPages: totalPages,
+                  totalItems: filteredCount,
+                  pageSize: _pageSize,
+                  onPageChanged: (p) => setState(() => _page = p),
+                ),
+              ],
+            ),
           ),
         ],
       ),
