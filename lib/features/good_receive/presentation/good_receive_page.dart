@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_web_app/features/good_receive/models/good_receive_model.dart';
+import 'package:warehouse_web_app/features/good_receive/presentation/transactions_good_receive_page.dart';
 import '../models/good_receive_dummy_data.dart';
 
 /// Payroll page: totals summary + payroll table + "Generate Payroll" action.
@@ -106,7 +107,12 @@ class _GoodReceivePageState extends State<GoodReceivePage> {
                               DataCell(
                                 TextButton(
                                   onPressed: () {
-                                    // TODO: wire up action (e.g. navigate to detail view).
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const TransactionsGoodReceivePage(),
+                                      ),
+                                    );
                                   },
                                   child: const Text('View'),
                                 ),
