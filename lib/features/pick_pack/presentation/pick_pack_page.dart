@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warehouse_web_app/features/pick_pack/presentation/transaction_pick_pack_page.dart';
 import '../models/pick_pack_model.dart';
 import '../models/pick_pack_dummy_data.dart';
 
@@ -111,7 +112,12 @@ class _PickPackPageState extends State<PickPackPage> {
                               DataCell(
                                 TextButton(
                                   onPressed: () {
-                                    // TODO: wire up action (e.g. navigate to detail view).
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const TransactionsPickPackPage(),
+                                      ),
+                                    );
                                   },
                                   child: const Text('View'),
                                 ),
