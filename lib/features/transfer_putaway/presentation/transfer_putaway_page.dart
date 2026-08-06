@@ -1,198 +1,202 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_sizes.dart';
-import '../../../core/utils/responsive.dart';
-import '../../../shared/dialogs/action_dialog.dart';
-import '../../../shared/widgets/app_card.dart';
-import '../../../shared/widgets/section_title.dart';
-import '../../../shared/widgets/summary_card.dart';
+import 'package:warehouse_web_app/core/constants/app_sizes.dart';
+import 'package:warehouse_web_app/features/transfer_putaway/models/transfer_putaway_model.dart';
+import 'package:warehouse_web_app/shared/dialogs/action_dialog.dart';
+import 'package:warehouse_web_app/shared/widgets/pagination_bar.dart';
+import 'package:warehouse_web_app/shared/widgets/section_title.dart';
+import '../models/transfer_putaway_dummy_data.dart';
 
-/// Reports page: headline stats + a bar chart (headcount by dept) and a
-/// pie chart (payroll distribution), plus a "Download Report" action.
-class TransferPutawayPage extends StatelessWidget {
+/// Transfer & Putaway page: Part No / Location listing table with search.
+class TransferPutawayPage extends StatefulWidget {
   const TransferPutawayPage({super.key});
 
   @override
+  State<TransferPutawayPage> createState() => _TransferPutawayPageState();
+}
+
+class _TransferPutawayPageState extends State<TransferPutawayPage> {
+  // Swap this out for a real repository/API call once the backend is ready.
+  final List<TransferPutawayModel> _allRecords =
+      TransferPutawayDummyData.records;
+
+  final ScrollController _horizontalController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  
+
+  String _query = '';
+
+  @override
+  void dispose() {
+    _horizontalController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  int _page = 1;
+  static const _pageSize = 8;
+
+  List<TransferPutawayModel> get _pageItems {
+    final filtered = _filteredRecords;
+    final start = (_page - 1) * _pageSize;
+    if (start >= filtered.length) return [];
+    return filtered.skip(start).take(_pageSize).toList();
+  }
+
+  List<TransferPutawayModel> get _filteredRecords {
+    if (_query.trim().isEmpty) return _allRecords;
+    final q = _query.trim().toLowerCase();
+    return _allRecords.where((r) {
+      return r.partNo.toLowerCase().contains(q) ||
+          r.location.toLowerCase().contains(q);
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isDesktop = Responsive.isDesktop(context);
-    final columns = Responsive.gridColumns(context);
+    final records = _pageItems;
+    final filteredCount = _filteredRecords.length;
+    final totalPages = (filteredCount / _pageSize).ceil();
+
+    // Clamp the current page if filtering reduced the page count.
+    if (_page > totalPages && totalPages > 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _page = totalPages);
+      });
+    }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSizes.spaceLg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
-            title: 'Reports',
-            subtitle: 'Company-wide statistics · August 2026',
-            trailing: ElevatedButton.icon(
-              onPressed: () => showActionDialog(context, action: 'Download Report'),
-              icon: const Icon(Icons.download_outlined, size: 18),
-              label: const Text('Download Report'),
-            ),
-          ),
-          const SizedBox(height: AppSizes.spaceLg),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: columns,
-            mainAxisSpacing: AppSizes.spaceMd,
-            crossAxisSpacing: AppSizes.spaceMd,
-            childAspectRatio: 1.6,
-            children: const [
-              SummaryCard(label: 'Headcount Growth', value: '+8.4%', icon: Icons.trending_up, color: AppColors.success, trend: '8.4%'),
-              SummaryCard(label: 'Turnover Rate', value: '3.1%', icon: Icons.trending_down, color: AppColors.danger, trend: '0.6%', trendIsPositive: false),
-              SummaryCard(label: 'Avg. Attendance', value: '96.2%', icon: Icons.fact_check_outlined, color: AppColors.primary, trend: '1.2%'),
-              SummaryCard(label: 'Payroll Cost', value: 'RM 412K', icon: Icons.account_balance_wallet_outlined, color: AppColors.secondary, trend: '2.9%'),
-            ],
-          ),
-          const SizedBox(height: AppSizes.spaceLg),
-          isDesktop
-              ? IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(flex: 3, child: _headcountBarChart()),
-                      const SizedBox(width: AppSizes.spaceLg),
-                      Expanded(flex: 2, child: _payrollPieChart()),
-                    ],
-                  ),
-                )
-              : Column(
-                  children: [
-                    _headcountBarChart(),
-                    const SizedBox(height: AppSizes.spaceLg),
-                    _payrollPieChart(),
-                  ],
-                ),
-        ],
-      ),
-    );
-  }
-
-  Widget _headcountBarChart() {
-    const depts = ['Eng', 'Mktg', 'Sales', 'HR', 'Fin', 'Ops'];
-    const values = [42.0, 18.0, 26.0, 9.0, 12.0, 21.0];
-
-    return AppCard(
-      child: SizedBox(
-        height: 320,
+        padding: const EdgeInsets.all(AppSizes.spaceLg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Headcount by Department', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-            const SizedBox(height: AppSizes.spaceLg),
-            Expanded(
-              child: BarChart(
-                BarChartData(
-                  gridData: const FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  titlesData: FlTitlesData(
-                    leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) => Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(depts[value.toInt() % depts.length],
-                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+            // ---------- Search bar ----------
+            SectionTitle(
+              title: 'Transfer & Putaway',
+              subtitle: '$filteredCount records found',
+            trailing: Wrap(
+              spacing: AppSizes.spaceSm,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => showActionDialog(context, action: 'Assign Location'),
+                  label: const Text('Assign Location'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => showActionDialog(context, action: 'Add Location(s)'),
+                  label: const Text('Add Location(s)'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSizes.spaceLg),
+            SizedBox(
+              width: 320,
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) => setState(() {
+                  _query = value;
+                  _page = 1;
+                }),
+                decoration: InputDecoration(
+                  hintText: 'Search Part No or Location',
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  suffixIcon: _query.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.clear, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                          },
                         ),
-                      ),
-                    ),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
                   ),
-                  barGroups: List.generate(
-                    values.length,
-                    (i) => BarChartGroupData(x: i, barRods: [
-                      BarChartRodData(
-                        toY: values[i],
-                        color: AppColors.chartPalette[i % AppColors.chartPalette.length],
-                        width: 22,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ]),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _payrollPieChart() {
-    final data = {
-      'Engineering': 38.0,
-      'Sales': 22.0,
-      'Marketing': 14.0,
-      'Operations': 16.0,
-      'Others': 10.0,
-    };
-
-    return AppCard(
-      child: SizedBox(
-        height: 320,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Payroll Distribution', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-            const SizedBox(height: AppSizes.spaceLg),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: PieChart(
-                      PieChartData(
-                        sectionsSpace: 2,
-                        centerSpaceRadius: 36,
-                        sections: List.generate(data.length, (i) {
-                          final entry = data.entries.elementAt(i);
-                          return PieChartSectionData(
-                            value: entry.value,
-                            color: AppColors.chartPalette[i % AppColors.chartPalette.length],
-                            title: '${entry.value.toInt()}%',
-                            radius: 46,
-                            titleStyle: const TextStyle(
-                                fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-                          );
-                        }),
+            const SizedBox(height: 16),
+        
+            // ---------- Table ----------
+            Card(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              child: Scrollbar(
+                controller: _horizontalController,
+                thumbVisibility: true,
+                trackVisibility: true,
+                notificationPredicate: (notif) => true,
+                child: SingleChildScrollView(
+                  controller: _horizontalController,
+                  scrollDirection: Axis.horizontal,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 900),
+                    child: DataTable(
+                      headingRowColor: WidgetStateProperty.all(
+                        Colors.grey.shade100,
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSizes.spaceMd),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(data.length, (i) {
-                      final entry = data.entries.elementAt(i);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: AppColors.chartPalette[i % AppColors.chartPalette.length],
-                                shape: BoxShape.circle,
+                      columns: const [
+                        DataColumn(label: Text('Part No')),
+                        DataColumn(label: Text('Location')),
+                        DataColumn(label: Text('Action')),
+                      ],
+                      rows: records.isEmpty
+                          ? [
+                              const DataRow(
+                                cells: [
+                                  DataCell(Text('')),
+                                  DataCell(
+                                    Center(
+                                      widthFactor: 1,
+                                      child: Text('No matching records'),
+                                    ),
+                                  ),
+                                  DataCell(Text('')),
+                                ],
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(entry.key, style: const TextStyle(fontSize: 11)),
-                          ],
-                        ),
-                      );
-                    }),
+                            ]
+                          : records.map((item) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item.partNo)),
+                                  DataCell(
+                                    SizedBox(
+                                      width: 400,
+                                      child: Text(
+                                        item.location,
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                  ),
+                                  // Action intentionally left empty for
+                                  // now — no action defined in the design.
+                                  const DataCell(SizedBox()),
+                                ],
+                              );
+                            }).toList(),
+                    ),
                   ),
-                ],
+                ),
               ),
+            ),
+            const SizedBox(height: 12),
+            PaginationBar(
+              currentPage: _page,
+              totalPages: totalPages,
+              totalItems: filteredCount,
+              pageSize: _pageSize,
+              onPageChanged: (p) => setState(() => _page = p),
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
