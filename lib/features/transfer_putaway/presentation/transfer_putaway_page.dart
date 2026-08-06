@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:warehouse_web_app/core/constants/app_sizes.dart';
 import 'package:warehouse_web_app/features/transfer_putaway/models/transfer_putaway_model.dart';
 import 'package:warehouse_web_app/shared/dialogs/action_dialog.dart';
+import 'package:warehouse_web_app/shared/widgets/app_card.dart';
 import 'package:warehouse_web_app/shared/widgets/pagination_bar.dart';
 import 'package:warehouse_web_app/shared/widgets/section_title.dart';
 import '../models/transfer_putaway_dummy_data.dart';
@@ -34,6 +35,7 @@ class _TransferPutawayPageState extends State<TransferPutawayPage> {
 
   int _page = 1;
   static const _pageSize = 8;
+  final Set<String> _selectedPartNos = {};
 
   List<TransferPutawayModel> get _pageItems {
     final filtered = _filteredRecords;
@@ -77,7 +79,12 @@ class _TransferPutawayPageState extends State<TransferPutawayPage> {
               spacing: AppSizes.spaceSm,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () => showActionDialog(context, action: 'Assign Location'),
+                  onPressed: _selectedPartNos.isEmpty
+                      ? null
+                      : () {
+                          // TODO: show "Assign Location" flow for
+                          // _selectedPartNos once the design is shared.
+                        },
                   label: const Text('Assign Location'),
                 ),
                 ElevatedButton.icon(
@@ -88,112 +95,143 @@ class _TransferPutawayPageState extends State<TransferPutawayPage> {
             ),
           ),
           const SizedBox(height: AppSizes.spaceLg),
-            SizedBox(
-              width: 320,
-              child: TextField(
-                controller: _searchController,
-                onChanged: (value) => setState(() {
-                  _query = value;
-                  _page = 1;
-                }),
-                decoration: InputDecoration(
-                  hintText: 'Search Part No or Location',
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  suffixIcon: _query.isEmpty
-                      ? null
-                      : IconButton(
-                          icon: const Icon(Icons.clear, size: 18),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() => _query = '');
-                          },
-                        ),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-        
-            // ---------- Table ----------
-            Card(
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Colors.grey.shade300),
-              ),
-              child: Scrollbar(
-                controller: _horizontalController,
-                thumbVisibility: true,
-                trackVisibility: true,
-                notificationPredicate: (notif) => true,
-                child: SingleChildScrollView(
-                  controller: _horizontalController,
-                  scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 900),
-                    child: DataTable(
-                      headingRowColor: WidgetStateProperty.all(
-                        Colors.grey.shade100,
-                      ),
-                      columns: const [
-                        DataColumn(label: Text('Part No')),
-                        DataColumn(label: Text('Location')),
-                        DataColumn(label: Text('Action')),
-                      ],
-                      rows: records.isEmpty
-                          ? [
-                              const DataRow(
-                                cells: [
-                                  DataCell(Text('')),
-                                  DataCell(
-                                    Center(
-                                      widthFactor: 1,
-                                      child: Text('No matching records'),
-                                    ),
-                                  ),
-                                  DataCell(Text('')),
-                                ],
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ---------- Search bar ----------
+                  SizedBox(
+                    width: 320,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) => setState(() {
+                        _query = value;
+                        _page = 1;
+                      }),
+                      decoration: InputDecoration(
+                        hintText: 'Search Part No or Location',
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        suffixIcon: _query.isEmpty
+                            ? null
+                            : IconButton(
+                                icon: const Icon(Icons.clear, size: 18),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() => _query = '');
+                                },
                               ),
-                            ]
-                          : records.map((item) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Text(item.partNo)),
-                                  DataCell(
-                                    SizedBox(
-                                      width: 400,
-                                      child: Text(
-                                        item.location,
-                                        softWrap: true,
-                                      ),
-                                    ),
-                                  ),
-                                  // Action intentionally left empty for
-                                  // now — no action defined in the design.
-                                  const DataCell(SizedBox()),
-                                ],
-                              );
-                            }).toList(),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: AppSizes.spaceLg),
+
+                  // ---------- Table ----------
+                  Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    child: Scrollbar(
+                      controller: _horizontalController,
+                      thumbVisibility: true,
+                      trackVisibility: true,
+                      notificationPredicate: (notif) => true,
+                      child: SingleChildScrollView(
+                        controller: _horizontalController,
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minWidth: 900),
+                          child: DataTable(
+                            headingRowColor: WidgetStateProperty.all(
+                              Colors.grey.shade100,
+                            ),
+                            onSelectAll: (selectAll) {
+                              setState(() {
+                                if (selectAll ?? false) {
+                                  _selectedPartNos
+                                    ..clear()
+                                    ..addAll(records.map((r) => r.partNo));
+                                } else {
+                                  _selectedPartNos.clear();
+                                }
+                              });
+                            },
+                            columns: const [
+                              DataColumn(label: Text('Part No')),
+                              DataColumn(label: Text('Location')),
+                              DataColumn(label: Text('Action')),
+                            ],
+                            rows: records.isEmpty
+                                ? [
+                                    const DataRow(
+                                      cells: [
+                                        DataCell(Text('')),
+                                        DataCell(
+                                          Center(
+                                            widthFactor: 1,
+                                            child: Text('No matching records'),
+                                          ),
+                                        ),
+                                        DataCell(Text('')),
+                                      ],
+                                    ),
+                                  ]
+                                : records.map((item) {
+                                    final isSelected =
+                                        _selectedPartNos.contains(item.partNo);
+                                    return DataRow(
+                                      selected: isSelected,
+                                      onSelectChanged: (selected) {
+                                        setState(() {
+                                          if (selected ?? false) {
+                                            _selectedPartNos.add(item.partNo);
+                                          } else {
+                                            _selectedPartNos.remove(item.partNo);
+                                          }
+                                        });
+                                      },
+                                      cells: [
+                                        DataCell(Text(item.partNo)),
+                                        DataCell(
+                                          SizedBox(
+                                            width: 400,
+                                            child: Text(
+                                              item.location,
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                        ),
+                                        const DataCell(SizedBox()),
+                                      ],
+                                    );
+                                  }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSizes.spaceMd),
+
+                  // ---------- Pagination ----------
+                  PaginationBar(
+                    currentPage: _page,
+                    totalPages: totalPages,
+                    totalItems: filteredCount,
+                    pageSize: _pageSize,
+                    onPageChanged: (p) => setState(() => _page = p),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
-            PaginationBar(
-              currentPage: _page,
-              totalPages: totalPages,
-              totalItems: filteredCount,
-              pageSize: _pageSize,
-              onPageChanged: (p) => setState(() => _page = p),
             ),
           ],
         ),
