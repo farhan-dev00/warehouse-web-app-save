@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_web_app/features/outgoing/models/outgoing_model.dart';
+import 'package:warehouse_web_app/features/outgoing/presentation/outgoing_detail_page.dart';
 import '../models/outgoing_dummy_data.dart';
 
 /// Outgoing page: Delivery Order listing table.
@@ -111,9 +112,19 @@ class _OutgoingPageState extends State<OutgoingPage> {
                               ),
                               DataCell(Text(item.purchaseOrder)),
                               DataCell(Text(item.terms)),
-                              // Action button intentionally skipped for now —
-                              // detail page will be wired up later.
-                              const DataCell(SizedBox()),
+                              DataCell(
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const OutgoingDetailPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('View'),
+                                ),
+                              ),
                             ],
                           );
                         }).toList(),
