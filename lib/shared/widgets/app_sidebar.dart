@@ -34,7 +34,7 @@ class AppSidebar extends StatelessWidget {
       children: [
         NavItem(label: 'Good Receive', icon: Icons.payments_outlined, route: '/good_receive'),
         NavItem(label: 'Transfer & Putaway', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
-        NavItem(label: 'Pick & Pack', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
+        NavItem(label: 'Pick & Pack', icon: Icons.bar_chart_outlined, route: '/pick_pack'),
         NavItem(label: 'Outgoing', icon: Icons.bar_chart_outlined, route: '/transfer_putaway'),
       ],
     ),
