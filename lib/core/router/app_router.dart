@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:warehouse_web_app/features/outgoing/presentation/outgoing_page.dart';
 import 'package:warehouse_web_app/features/pick_pack/presentation/pick_pack_page.dart';
 
 import '../services/auth_provider.dart';
@@ -24,6 +25,7 @@ const Map<String, String> routeTitles = {
   '/good_receive': 'Good Receive',
   '/transfer_putaway': 'Transfer & Putaway',
   '/pick_pack': 'Pick & Pack',
+  '/outgoing': 'Outgoing',
   '/settings': 'Settings',
 };
 
@@ -70,8 +72,9 @@ GoRouter _buildRouter(Ref ref) {
           GoRoute(path: '/role_management', builder: (context, state) => const RoleManagementPage()),
           GoRoute(path: '/permission_management', builder: (context, state) => const PermissionManagementPage()),
           GoRoute(path: '/good_receive', builder: (context, state) => const GoodReceivePage()),
-          GoRoute(path: '/transfer_putaway', builder: (context, state) => const TransferPutawayPage()),
+          GoRoute(path: '/transfer_putaway', builder: (context, state) => const TransferPutawayPage()),        
           GoRoute(path: '/pick_pack', builder: (context, state) => const PickPackPage()),
+          GoRoute(path: '/outgoing', builder: (context, state) => const OutgoingPage()),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
         ],
       ),
