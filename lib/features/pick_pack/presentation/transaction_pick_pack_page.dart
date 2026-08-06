@@ -246,12 +246,10 @@ class _TransactionsPickPackPageState extends State<TransactionsPickPackPage> {
 class _ReadOnlyField extends StatelessWidget {
   final String label;
   final String value;
-  final bool compact;
 
   const _ReadOnlyField({
     required this.label,
     required this.value,
-    this.compact = false,
   });
 
   @override
@@ -274,7 +272,7 @@ class _ReadOnlyField extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           SizedBox(
-            width: compact ? 100 : 260,
+            width: 260,
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 10,
