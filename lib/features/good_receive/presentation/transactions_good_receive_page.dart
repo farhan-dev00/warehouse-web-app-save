@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warehouse_web_app/core/constants/app_colors.dart';
 import 'package:warehouse_web_app/features/good_receive/models/details/good_receive_detail_model.dart';
 import 'package:warehouse_web_app/features/good_receive/models/details/good_receive_item_model.dart';
 import 'package:warehouse_web_app/features/good_receive/models/details/good_receive_transaction_dummy_data.dart';
@@ -59,7 +60,18 @@ class _TransactionsGoodReceivePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Good Receive Details')),
+      appBar: AppBar(title: const Text('Good Receive Details'),
+        automaticallyImplyLeading: false,),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: AppColors.accent,
+        foregroundColor: AppColors.accentText,
+        label: const Text(
+          'BACK',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -89,6 +101,7 @@ class _TransactionsGoodReceivePageState
           ),
         ),
       ),
+
     );
   }
 

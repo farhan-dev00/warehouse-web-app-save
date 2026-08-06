@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warehouse_web_app/core/constants/app_colors.dart';
 import 'package:warehouse_web_app/features/pick_pack/models/details/pick_pack_detail_model.dart';
 import 'package:warehouse_web_app/features/pick_pack/models/details/pick_pack_item_model.dart';
 import 'package:warehouse_web_app/features/pick_pack/models/details/pick_pack_transaction_dummy_data.dart';
@@ -29,7 +30,18 @@ class _TransactionsPickPackPageState extends State<TransactionsPickPackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pick & Pack Details')),
+      appBar: AppBar(title: const Text('Pick & Pack Details'),
+        automaticallyImplyLeading: false,),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).pop(),
+        backgroundColor: AppColors.accent,
+        foregroundColor: AppColors.accentText,
+        label: const Text(
+          'BACK',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
