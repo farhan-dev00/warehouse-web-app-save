@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:warehouse_web_app/features/label_print_item/presentation/item_page.dart';
+import 'package:warehouse_web_app/features/label_print_location/presentation/location_page.dart';
 import 'package:warehouse_web_app/features/outgoing/presentation/outgoing_page.dart';
 import 'package:warehouse_web_app/features/pick_pack/presentation/pick_pack_page.dart';
 
@@ -79,7 +80,7 @@ GoRouter _buildRouter(Ref ref) {
           GoRoute(path: '/pick_pack', builder: (context, state) => const PickPackPage()),
           GoRoute(path: '/outgoing', builder: (context, state) => const OutgoingPage()),
           GoRoute(path: '/item', builder: (context, state) => const ItemPage()),
-          // GoRoute(path: '/location', builder: (context, state) => const LocationPage()),
+          GoRoute(path: '/location', builder: (context, state) => const LocationPage()),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
         ],
       ),

@@ -40,10 +40,10 @@ class AppSidebar extends StatelessWidget {
     ),
     const NavItem(
       label: 'Label Print',
-      icon: Icons.compare_arrows,
+      icon: Icons.print,
       children: [
-        NavItem(label: 'Item', icon: Icons.diamond, route: '/item'),
-        // NavItem(label: 'Location', icon: Icons.warehouse, route: '/location'),
+        NavItem(label: 'Item', icon: Icons.widgets, route: '/item'),
+        NavItem(label: 'Location', icon: Icons.location_on, route: '/location'),
       ],
     ),
     const NavItem(label: 'Settings', icon: Icons.settings_outlined, route: '/settings'),
