@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:warehouse_web_app/core/constants/app_sizes.dart';
 import 'package:warehouse_web_app/features/transfer_putaway/models/transfer_putaway_model.dart';
+import 'package:warehouse_web_app/features/transfer_putaway/widgets/assign_location_dialog.dart';
 import 'package:warehouse_web_app/shared/dialogs/action_dialog.dart';
 import 'package:warehouse_web_app/shared/widgets/app_card.dart';
 import 'package:warehouse_web_app/shared/widgets/pagination_bar.dart';
@@ -82,8 +83,12 @@ class _TransferPutawayPageState extends State<TransferPutawayPage> {
                   onPressed: _selectedPartNos.isEmpty
                       ? null
                       : () {
-                          // TODO: show "Assign Location" flow for
-                          // _selectedPartNos once the design is shared.
+                          showDialog(
+                            context: context,
+                            builder: (_) => AssignLocationDialog(
+                              partNos: _selectedPartNos.toList(),
+                            ),
+                          );
                         },
                   label: const Text('Assign Location'),
                 ),
